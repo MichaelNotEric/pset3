@@ -36,22 +36,23 @@ public class GraphGenerator {
 					cfg.addEdge(position, m, jc, nextPos, m, jc);
 				} else if(iname.contains("if")){
 					System.out.println("Found an if");
-					BranchInstruction br = (BranchInstruction) inst;
-					int dest = br.getTarget().getPosition();
-					System.out.println("Destination: " + dest);
-					cfg.addEdge(position, m, jc, dest, m, jc);
-				} else if(iname.contains("return")){
-					System.out.println("Found a return");
 					InstructionHandle nextih = ih.getNext();
 					int nextPos = nextih.getPosition();
 					cfg.addEdge(position, m, jc, nextPos, m, jc);//if branch isn't taken
-					cfg.addEdge(position, m, jc, -1, m, jc);//if branch is taken
+					BranchInstruction br = (BranchInstruction) inst;
+					int dest = br.getTarget().getPosition();
+					System.out.println("Destination: " + dest);
+					cfg.addEdge(position, m, jc, dest, m, jc);//if branch is taken
+				} else if(iname.contains("return")){
+					System.out.println("Found a return");
+					cfg.addEdge(position, m, jc, -1, m, jc);
 				}
 				
 				
 				
 			}
 		}
+		cfg.printCFG();
 		return cfg;
 	}
 	public CFG createCFGWithMethodInvocation(String className) throws ClassNotFoundException {
@@ -63,4 +64,6 @@ public class GraphGenerator {
 		gg.createCFG("pset3.C"); // example invocation of createCFG
 		gg.createCFGWithMethodInvocation("pset3.D"); // example invocation of createCFGWithMethodInovcation
 	}
+	
+	
 }

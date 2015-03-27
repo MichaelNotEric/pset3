@@ -63,4 +63,13 @@ public class CFG {
 		// you will implement this method in Question 2.2
 		return true;
 	}
+	public void printCFG(){
+		System.out.println("CFG:");
+		for(Node n: this.nodes){
+			System.out.println("\tNode:");
+			System.out.println("\t\t"+"Position: "+n.position);
+			System.out.println("\tEdges:");
+			System.out.println("\t\t"+edges.get(n)+"\n");
+		}
+	}
 }
