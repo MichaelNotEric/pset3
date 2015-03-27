@@ -31,7 +31,6 @@ public class GraphGenerator {
 	}
 	public CFG createCFGWithMethodInvocation(String className) throws ClassNotFoundException {
 		// your code goes here
-		System.out.println("Hello world");
 		return new CFG();
 	}
 	public static void main(String[] a) throws ClassNotFoundException {
