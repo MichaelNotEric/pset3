@@ -3,6 +3,7 @@ package pset3;
 import org.apache.bcel.Repository;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.BranchInstruction;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.Instruction;
@@ -17,6 +18,7 @@ public class GraphGenerator {
 		ClassGen cg = new ClassGen(jc);
 		ConstantPoolGen cpg = cg.getConstantPool();
 		for (Method m: cg.getMethods()) {
+			cfg.addNode(-1, m, jc);
 			MethodGen mg = new MethodGen(m, cg.getClassName(), cpg);
 			InstructionList il = mg.getInstructionList();
 			InstructionHandle[] handles = il.getInstructionHandles();
@@ -25,6 +27,29 @@ public class GraphGenerator {
 				cfg.addNode(position, m, jc);
 				Instruction inst = ih.getInstruction();
 				// your code goes here
+				System.out.println(ih.toString() + " position " + position);
+				String iname = inst.getName();
+				if(iname.contains("load") || iname.contains("invokespecial")){
+					System.out.println("Found a load or invokespecial");
+					InstructionHandle nextih = ih.getNext();
+					int nextPos = nextih.getPosition();
+					cfg.addEdge(position, m, jc, nextPos, m, jc);
+				} else if(iname.contains("if")){
+					System.out.println("Found an if");
+					BranchInstruction br = (BranchInstruction) inst;
+					int dest = br.getTarget().getPosition();
+					System.out.println("Destination: " + dest);
+					cfg.addEdge(position, m, jc, dest, m, jc);
+				} else if(iname.contains("return")){
+					System.out.println("Found a return");
+					InstructionHandle nextih = ih.getNext();
+					int nextPos = nextih.getPosition();
+					cfg.addEdge(position, m, jc, nextPos, m, jc);//if branch isn't taken
+					cfg.addEdge(position, m, jc, -1, m, jc);//if branch is taken
+				}
+				
+				
+				
 			}
 		}
 		return cfg;
